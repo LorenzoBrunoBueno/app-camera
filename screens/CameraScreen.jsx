@@ -1,15 +1,31 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-export default function App() {
+ 
+export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-
+ 
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+ 
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center' }}>Autorize a Utilização da Câmera</Text>
+        <Button onPress={requestPermission} title="Permições" />
+      </View>
+    );
+  }
+ 
   function toggleCameraType() {
     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
-
+ 
+ 
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} type={type}>
@@ -22,7 +38,7 @@ export default function App() {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
